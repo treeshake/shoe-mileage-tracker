@@ -48,7 +48,12 @@ curl -X POST http://localhost:4000/runs \
   }'
 ```
 
+## Admin: Create API Key
 
-
-
+```
+curl -X POST http://localhost:4000/admin/api-keys \
+  -H "Content-Type: application/json" \
+  -H "x-admin-secret: <ADMIN_API_SECRET>" \
+  -d '{"label": "shoe-mileage-tracker", "ttlHours": 7200 }'
+```
 
