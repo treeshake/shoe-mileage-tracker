@@ -1,6 +1,8 @@
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import { apiKeyAuthMiddleware } from "./middlewares/api-key-auth";
 import adminApiKeysRouter from "./routes/admin";
@@ -28,7 +30,10 @@ app.use("/runs", runsRouter);
 app.use("/shoes", shoesRouter);
 
 // Local dev server (Vercel will ignore this and use api/index.ts)
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isDirectRun =
+  path.resolve(process.argv[1] ?? "") === fileURLToPath(import.meta.url);
+
+if (isDirectRun) {
   const port = process.env.PORT || 4000;
   app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);
