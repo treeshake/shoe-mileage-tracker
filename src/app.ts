@@ -30,10 +30,12 @@ app.use("/runs", runsRouter);
 app.use("/shoes", shoesRouter);
 
 // Local dev server (Vercel will ignore this and use api/index.ts)
+// Only start server if not in Vercel environment and running directly
+const isVercel = process.env.VERCEL || process.env.VERCEL_ENV;
 const isDirectRun =
   path.resolve(process.argv[1] ?? "") === fileURLToPath(import.meta.url);
 
-if (isDirectRun) {
+if (!isVercel && isDirectRun) {
   const port = process.env.PORT || 4000;
   app.listen(port, () => {
     console.log(`Server listening on http://localhost:${port}`);
