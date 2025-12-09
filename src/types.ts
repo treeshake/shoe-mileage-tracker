@@ -66,3 +66,62 @@ export interface RunDetailsViewRow {
   run_type_name: string;
   run_type_created_at: string;
 }
+
+/**
+ * Response type for successful run creation
+ */
+export interface RunCreateResponse {
+  id: number;
+  date: string;
+  distance_km: number;
+  shoe_id: number;
+  run_type_id: number;
+  notes: string | null;
+  created_at: string;
+  brand: string;
+  model: string;
+  run_type: string;
+}
+
+/**
+ * Query parameters for GET /runs
+ */
+export interface RunsQueryParams {
+  limit?: string;
+}
+
+/**
+ * Standard error response
+ */
+export interface ErrorResponse {
+  error: string;
+}
+
+/**
+ * Request body for creating API keys
+ */
+export interface ApiKeyCreateInput {
+  label?: string;
+  ttlHours?: number;
+}
+
+/**
+ * Response for API key creation
+ */
+export interface ApiKeyCreateResponse {
+  apiKey: string;
+  record: {
+    id: number;
+    label: string | null;
+    created_at: string;
+    expires_at: string | null;
+    revoked: boolean;
+  };
+}
+
+/**
+ * Route parameters for single shoe endpoint
+ */
+export interface ShoeParams {
+  id: string;
+}

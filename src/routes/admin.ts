@@ -1,5 +1,6 @@
 import { Router, type Request, type Response } from "express";
 import { createApiKey } from "../auth";
+import { type ApiKeyCreateInput, type ApiKeyCreateResponse, type ErrorResponse } from "../types";
 
 const router = Router();
 
@@ -22,7 +23,7 @@ if (!ADMIN_SECRET) {
  *   "ttlHours": 24
  * }
  */
-router.post("/api-keys", async (req: Request, res: Response) => {
+router.post("/api-keys", async (req: Request<{}, ApiKeyCreateResponse | ErrorResponse, ApiKeyCreateInput>, res: Response<ApiKeyCreateResponse | ErrorResponse>) => {
   if (ADMIN_SECRET) {
     const adminHeader = req.headers["x-admin-secret"];
     if (adminHeader !== ADMIN_SECRET) {
@@ -30,10 +31,7 @@ router.post("/api-keys", async (req: Request, res: Response) => {
     }
   }
 
-  const { label, ttlHours } = req.body as {
-    label?: string;
-    ttlHours?: number;
-  };
+  const { label, ttlHours } = req.body;
 
   try {
     const { apiKey, record } = await createApiKey(label, ttlHours);

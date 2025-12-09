@@ -1,6 +1,6 @@
 import { type Request, type Response, Router } from "express";
 import { query } from "../db";
-import { type ShoeStats } from "../types";
+import type { ErrorResponse, ShoeParams, ShoeStats } from "../types";
 
 const router = Router();
 
@@ -8,7 +8,7 @@ const router = Router();
  * GET /shoes
  * Summary per shoe: total_km, runs_count, last_run_date
  */
-router.get("/", async (_req: Request, res: Response) => {
+router.get("/", async (_req: Request<{}, ShoeStats[] | ErrorResponse>, res: Response<ShoeStats[] | ErrorResponse>) => {
   try {
     const rows = await query<ShoeStats>(
       `
@@ -37,7 +37,7 @@ router.get("/", async (_req: Request, res: Response) => {
  * GET /shoes/:id
  * Stats for a single shoe by id.
  */
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request<ShoeParams, ShoeStats | ErrorResponse>, res: Response<ShoeStats | ErrorResponse>) => {
   const id = parseInt(req.params.id as string, 10);
   if (Number.isNaN(id)) {
     return res.status(400).json({ error: "Invalid shoe id" });
