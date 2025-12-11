@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 
 import { apiKeyAuthMiddleware } from "./middlewares/api-key-auth";
+import { loggingMiddleware } from "./middlewares/logging";
 import adminApiKeysRouter from "./routes/admin";
 import runsRouter from "./routes/runs";
 import shoesRouter from "./routes/shoes";
@@ -10,6 +11,9 @@ import shoesRouter from "./routes/shoes";
 dotenv.config();
 
 const app = express();
+
+// Add logging middleware first to capture all requests
+app.use(loggingMiddleware);
 
 app.use(bodyParser.json());
 
