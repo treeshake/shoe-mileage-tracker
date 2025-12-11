@@ -1,0 +1,404 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Shoe Mileage Tracker API",
+    "description": "API for tracking running shoe mileage and runs",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Shoe Mileage Tracker",
+      "url": "https://github.com/treeshake/shoe-mileage-tracker"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://shoe-mileage-tracker-30stlgf7l-treeshake-technologies-projects.vercel.app",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/runs": {
+      "get": {
+        "operationId": "getRuns",
+        "summary": "Get runs",
+        "description": "Retrieve a list of runs with optional limit",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of runs to return (max 200)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "example": "50"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of runs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunDetailsViewRow"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRun",
+        "summary": "Create a new run",
+        "description": "Log a new running session",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunCreateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Run created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunCreateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shoes": {
+      "get": {
+        "operationId": "getAllShoes",
+        "summary": "Get all shoes",
+        "description": "Retrieve statistics for all shoes",
+        "responses": {
+          "200": {
+            "description": "List of shoe statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShoeStats"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shoes/{id}": {
+      "get": {
+        "operationId": "getShoeById",
+        "summary": "Get shoe by ID",
+        "description": "Retrieve statistics for a specific shoe",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Shoe ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "example": "1"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Shoe statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShoeStats"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid shoe ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Shoe not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RunCreateInput": {
+        "type": "object",
+        "required": ["date", "distance_km", "brand", "model", "run_type"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the run in YYYY-MM-DD format",
+            "example": "2025-12-09"
+          },
+          "distance_km": {
+            "type": "number",
+            "minimum": 0.01,
+            "description": "Distance run in kilometers",
+            "example": 10.5
+          },
+          "brand": {
+            "type": "string",
+            "description": "Shoe brand",
+            "example": "Asics"
+          },
+          "model": {
+            "type": "string",
+            "description": "Shoe model",
+            "example": "Metaspeed Sky Tokyo"
+          },
+          "run_type": {
+            "type": "string",
+            "description": "Type of run",
+            "example": "Tempo"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional notes about the run",
+            "example": "Felt good, nice weather"
+          }
+        }
+      },
+      "RunCreateResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Unique run ID"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the run"
+          },
+          "distance_km": {
+            "type": "number",
+            "description": "Distance run in kilometers"
+          },
+          "shoe_id": {
+            "type": "integer",
+            "description": "ID of the shoe used"
+          },
+          "run_type_id": {
+            "type": "integer",
+            "description": "ID of the run type"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Notes about the run"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the run was created"
+          },
+          "brand": {
+            "type": "string",
+            "description": "Shoe brand"
+          },
+          "model": {
+            "type": "string",
+            "description": "Shoe model"
+          },
+          "run_type": {
+            "type": "string",
+            "description": "Type of run"
+          }
+        }
+      },
+      "RunDetailsViewRow": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "integer",
+            "description": "Unique run ID"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the run"
+          },
+          "distance_km": {
+            "type": "number",
+            "description": "Distance run in kilometers"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "description": "Notes about the run"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the run was created"
+          },
+          "shoe_id": {
+            "type": "integer",
+            "description": "ID of the shoe used"
+          },
+          "shoe_brand": {
+            "type": "string",
+            "nullable": true,
+            "description": "Shoe brand"
+          },
+          "shoe_model": {
+            "type": "string",
+            "nullable": true,
+            "description": "Shoe model"
+          },
+          "shoe_retired": {
+            "type": "boolean",
+            "description": "Whether the shoe is retired"
+          },
+          "shoe_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the shoe was added"
+          },
+          "run_type_id": {
+            "type": "integer",
+            "description": "ID of the run type"
+          },
+          "run_type_name": {
+            "type": "string",
+            "description": "Name of the run type"
+          },
+          "run_type_created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the run type was created"
+          }
+        }
+      },
+      "ShoeStats": {
+        "type": "object",
+        "properties": {
+          "shoe_id": {
+            "type": "integer",
+            "description": "Unique shoe ID"
+          },
+          "brand": {
+            "type": "string",
+            "nullable": true,
+            "description": "Shoe brand"
+          },
+          "model": {
+            "type": "string",
+            "nullable": true,
+            "description": "Shoe model"
+          },
+          "total_km": {
+            "type": "number",
+            "description": "Total kilometers run in this shoe"
+          },
+          "runs_count": {
+            "type": "integer",
+            "description": "Total number of runs with this shoe"
+          },
+          "last_run_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Date of the last run with this shoe"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message describing what went wrong",
+            "example": "Missing required fields: date, distance_km, brand, model, run_type"
+          }
+        }
+      }
+    }
+  }
+}
