@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://shoe-mileage-tracker-30stlgf7l-treeshake-technologies-projects.vercel.app",
+      "url": "https://api.treeshake.com.au",
       "description": "Production server"
     }
   ],
@@ -87,6 +87,260 @@
           },
           "400": {
             "description": "Bad request - validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/date/{date}": {
+      "get": {
+        "operationId": "getRunsByDate",
+        "summary": "Get runs by date",
+        "description": "Retrieve all runs for a specific date",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-12-11"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of runs for the specified date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunDetailsViewRow"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid date format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteRunsByDate",
+        "summary": "Delete runs by date",
+        "description": "Delete all runs for a specific date",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "path",
+            "description": "Date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-12-11"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Runs deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDeleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid date format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No runs found for the specified date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/date-range": {
+      "get": {
+        "operationId": "getRunsByDateRange",
+        "summary": "Get runs by date range",
+        "description": "Retrieve all runs within a specified date range",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-12-01"
+            }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date in YYYY-MM-DD format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2025-12-11"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of runs to return (max 200)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "example": "50"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of runs within the specified date range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RunDetailsViewRow"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters (missing dates, invalid format, or invalid range)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/runs/{id}": {
+      "delete": {
+        "operationId": "deleteRunById",
+        "summary": "Delete run by ID",
+        "description": "Delete a specific run by its ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Run ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]+$",
+              "example": "123"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunDeleteResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid run ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Run not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -385,6 +639,22 @@
             "format": "date",
             "nullable": true,
             "description": "Date of the last run with this shoe"
+          }
+        }
+      },
+      "RunDeleteResponse": {
+        "type": "object",
+        "required": ["message", "deletedCount"],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success message describing the deletion",
+            "example": "Run deleted successfully"
+          },
+          "deletedCount": {
+            "type": "integer",
+            "description": "Number of runs that were deleted",
+            "example": 1
           }
         }
       },

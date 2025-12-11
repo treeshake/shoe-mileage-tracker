@@ -125,3 +125,34 @@ export interface ApiKeyCreateResponse {
 export interface ShoeParams {
   id: string;
 }
+
+/**
+ * Route parameters for delete run by ID
+ */
+export interface RunIdParams {
+  id: string;
+}
+
+/**
+ * Route parameters for delete run by date
+ */
+export interface RunDateParams {
+  date: string;
+}
+
+/**
+ * Query parameters for GET /runs/date-range
+ */
+export interface RunDateRangeQueryParams {
+  startDate: string;
+  endDate: string;
+  limit?: string;
+}
+
+/**
+ * Response for successful run deletion
+ */
+export interface RunDeleteResponse {
+  message: string;
+  deletedCount: number;
+}
